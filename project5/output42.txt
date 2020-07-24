@@ -1,0 +1,255 @@
+TC1
+SimpleDB> -> WriteOut:    * Output to 0x13
+   * Output schema:
+  Att0: n.n_nationkey int
+   * Output pipe: 2
+   * Input pipe: 1
+   -> Project: 0
+      * 4 input attributes; 1 output attributes
+      * Output schema:
+  Att0: n.n_nationkey int
+      * Output pipe: 1
+      * Input pipe: 0
+      -> Select from nation: ( Att 1 from left record = Att 0 from literal record (String)) 
+         * Output schema:
+  Att0: n.n_nationkey int
+  Att1: n.n_name string
+  Att2: n.n_regionkey int
+  Att3: n.n_comment string
+         * Output pipe: 0
+24|
+***************************************************************************************************************************
+TC2
+SimpleDB> -> WriteOut:    * Output to 0x13
+   * Output schema:
+  Att0: n.n_name string
+   * Output pipe: 4
+   * Input pipe: 3
+   -> Project: 1
+      * 7 input attributes; 1 output attributes
+      * Output schema:
+  Att0: n.n_name string
+      * Output pipe: 3
+      * Input pipe: 2
+      -> Join: ( Att 2 from left record = Att 0 from right record (Int)) 
+         * Estimate = 8, Cost = 8
+         * Output schema:
+  Att0: n.n_nationkey int
+  Att1: n.n_name string
+  Att2: n.n_regionkey int
+  Att3: n.n_comment string
+  Att4: r.r_regionkey int
+  Att5: r.r_name string
+  Att6: r.r_comment string
+         * Output pipe: 2
+         * Input pipe: 1, 0
+         -> Select from nation: ( Att 0 from left record > Att 0 from literal record (Int)) 
+            * Output schema:
+  Att0: n.n_nationkey int
+  Att1: n.n_name string
+  Att2: n.n_regionkey int
+  Att3: n.n_comment string
+            * Output pipe: 1
+         -> Select from region: <empty>
+            * Output schema:
+  Att0: r.r_regionkey int
+  Att1: r.r_name string
+  Att2: r.r_comment string
+            * Output pipe: 0
+KENYA|
+MOROCCO|
+MOZAMBIQUE|
+PERU|
+UNITED STATES|
+INDIA|
+INDONESIA|
+JAPAN|
+CHINA|
+VIETNAM|
+FRANCE|
+GERMANY|
+ROMANIA|
+RUSSIA|
+UNITED KINGDOM|
+IRAN|
+IRAQ|
+JORDAN|
+SAUDI ARABIA|
+***************************************************************************************************************************
+TC3
+SimpleDB> -> WriteOut:    * Output to 0x13
+   * Output schema:
+  Att0: sum int
+   * Output pipe: 4
+   * Input pipe: 3
+   -> Sum:       * Function: 0 PushInt
+      * Output schema:
+  Att0: sum int
+      * Output pipe: 3
+      * Input pipe: 2
+      -> Join: ( Att 2 from left record = Att 0 from right record (Int)) 
+         * Estimate = 1, Cost = 1
+         * Output schema:
+  Att0: n.n_nationkey int
+  Att1: n.n_name string
+  Att2: n.n_regionkey int
+  Att3: n.n_comment string
+  Att4: r.r_regionkey int
+  Att5: r.r_name string
+  Att6: r.r_comment string
+         * Output pipe: 2
+         * Input pipe: 1, 0
+         -> Select from nation: ( Att 1 from left record = Att 0 from literal record (String)) 
+            * Output schema:
+  Att0: n.n_nationkey int
+  Att1: n.n_name string
+  Att2: n.n_regionkey int
+  Att3: n.n_comment string
+            * Output pipe: 1
+         -> Select from region: <empty>
+            * Output schema:
+  Att0: r.r_regionkey int
+  Att1: r.r_name string
+  Att2: r.r_comment string
+            * Output pipe: 0
+24|
+***************************************************************************************************************************
+TC4
+SimpleDB> -> WriteOut:    * Output to 0x13
+   * Output schema:
+  Att0: sum int
+  Att1: n.n_regionkey int
+   * Output pipe: 4
+   * Input pipe: 3
+   -> Group by:       * OrderMaker: NumAtts =     1
+  0:     2 Int
+      * Function: 2 PushInt
+      * Output schema:
+  Att0: sum int
+  Att1: n.n_regionkey int
+      * Output pipe: 3
+      * Input pipe: 2
+      -> Join: ( Att 2 from left record = Att 0 from right record (Int)) 
+         * Estimate = 1, Cost = 1
+         * Output schema:
+  Att0: n.n_nationkey int
+  Att1: n.n_name string
+  Att2: n.n_regionkey int
+  Att3: n.n_comment string
+  Att4: r.r_regionkey int
+  Att5: r.r_name string
+  Att6: r.r_comment string
+         * Output pipe: 2
+         * Input pipe: 1, 0
+         -> Select from nation: ( Att 1 from left record = Att 0 from literal record (String)) 
+            * Output schema:
+  Att0: n.n_nationkey int
+  Att1: n.n_name string
+  Att2: n.n_regionkey int
+  Att3: n.n_comment string
+            * Output pipe: 1
+         -> Select from region: <empty>
+            * Output schema:
+  Att0: r.r_regionkey int
+  Att1: r.r_name string
+  Att2: r.r_comment string
+            * Output pipe: 0
+1|1|
+***************************************************************************************************************************
+TC5
+SimpleDB> -> WriteOut:    * Output to 0x13
+   * Output schema:
+  Att0: sum int
+  Att1: r.r_regionkey int
+   * Output pipe: 7
+   * Input pipe: 6
+   -> Group by:       * OrderMaker: NumAtts =     1
+  0:     4 Int
+      * Function: 0 PushInt
+4 PushInt
+0 IntPlus
+      * Output schema:
+  Att0: sum int
+  Att1: r.r_regionkey int
+      * Output pipe: 6
+      * Input pipe: 5
+      -> Deduplication:          * Output schema:
+  Att0: n.n_nationkey int
+  Att1: n.n_name string
+  Att2: n.n_regionkey int
+  Att3: n.n_comment string
+  Att4: r.r_regionkey int
+  Att5: r.r_name string
+  Att6: r.r_comment string
+  Att7: c.c_custkey int
+  Att8: c.c_name string
+  Att9: c.c_address string
+  Att10: c.c_nationkey int
+  Att11: c.c_phone string
+  Att12: c.c_acctbal double
+  Att13: c.c_mktsegment string
+  Att14: c.c_comment string
+         * Output pipe: 5
+         * Input pipe: 4
+         -> Join: ( Att 0 from left record = Att 3 from right record (Int)) 
+            * Estimate = 48000, Cost = 48008
+            * Output schema:
+  Att0: n.n_nationkey int
+  Att1: n.n_name string
+  Att2: n.n_regionkey int
+  Att3: n.n_comment string
+  Att4: r.r_regionkey int
+  Att5: r.r_name string
+  Att6: r.r_comment string
+  Att7: c.c_custkey int
+  Att8: c.c_name string
+  Att9: c.c_address string
+  Att10: c.c_nationkey int
+  Att11: c.c_phone string
+  Att12: c.c_acctbal double
+  Att13: c.c_mktsegment string
+  Att14: c.c_comment string
+            * Output pipe: 4
+            * Input pipe: 3, 0
+            -> Join: ( Att 2 from left record = Att 0 from right record (Int)) 
+               * Estimate = 8, Cost = 8
+               * Output schema:
+  Att0: n.n_nationkey int
+  Att1: n.n_name string
+  Att2: n.n_regionkey int
+  Att3: n.n_comment string
+  Att4: r.r_regionkey int
+  Att5: r.r_name string
+  Att6: r.r_comment string
+               * Output pipe: 3
+               * Input pipe: 2, 1
+               -> Select from nation: ( Att 0 from left record > Att 0 from literal record (Int)) 
+                  * Output schema:
+  Att0: n.n_nationkey int
+  Att1: n.n_name string
+  Att2: n.n_regionkey int
+  Att3: n.n_comment string
+                  * Output pipe: 2
+               -> Select from region: <empty>
+                  * Output schema:
+  Att0: r.r_regionkey int
+  Att1: r.r_name string
+  Att2: r.r_comment string
+                  * Output pipe: 1
+            -> Select from customer: <empty>
+               * Output schema:
+  Att0: c.c_custkey int
+  Att1: c.c_name string
+  Att2: c.c_address string
+  Att3: c.c_nationkey int
+  Att4: c.c_phone string
+  Att5: c.c_acctbal double
+  Att6: c.c_mktsegment string
+  Att7: c.c_comment string
+               * Output pipe: 0
+2772|0|
+2208|1|
+3432|2|
+4339|3|
+3396|4|
+***************************************************************************************************************************
